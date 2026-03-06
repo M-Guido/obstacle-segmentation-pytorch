@@ -24,18 +24,4 @@ This repository contains a Python script for training and evaluating a deep lear
   - generates binary masks for new images,
   - saves semi-transparent orange overlays for visual inspection.
 
----
 
-## Repository structure
-
-Minimal suggested structure:
-
-```text
-obstacle-segmentation-pytorch/
-├─ obstacle_segmentation.py   # main training + inference script
-├─ README.md
-└─ (your private data – NOT in this repo)
-   ├─ images/
-   │   └─ Train/              # RGB images
-   └─ annotations/
-       └─ out_mask/           # overlays, one per image
