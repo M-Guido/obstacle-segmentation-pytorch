@@ -22,10 +22,10 @@ except Exception:
 # 0. USTAWIENIA ŚCIEŻEK (Twoje)
 # ============================================
 
-IMAGES_DIR = r"C:\Users\majmo\OneDrive\Desktop\Praktyki\images\Train"
-MASKS_DIR  = r"C:\Users\majmo\OneDrive\Desktop\Praktyki\annotations\out_mask"
+IMAGES_DIR = r"...images\Train"
+MASKS_DIR  = r"...annotations\out_mask"
 
-OUT_ROOT   = r"C:\Users\majmo\OneDrive\Desktop\Praktyki"
+OUT_ROOT   = r"..."
 MODEL_OUT  = os.path.join(OUT_ROOT, "segformer_obstacle.pth")
 
 # predykcje osobno:
@@ -422,3 +422,4 @@ if __name__ == "__main__":
         obstacle_threshold=0.5,
         max_images=None,
     )
+
