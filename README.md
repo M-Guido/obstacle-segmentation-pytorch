@@ -1,73 +1,156 @@
-# Obstacle Segmentation in Orchard Images (PyTorch)
+# 🌳 Obstacle Segmentation in Orchard Images (PyTorch)
 
-This repository contains a Python script for training and evaluating a deep learning model for **binary semantic segmentation** of obstacles in RGB images (e.g. tree trunks, wires) using **PyTorch**.
+Deep learning pipeline for **binary semantic segmentation** of obstacles (e.g. tree trunks, wires, poles) in RGB orchard images using **PyTorch**.
 
-> ⚠️ **Dataset is not included.**  
-> The project is designed to work with a private dataset annotated in a CVAT-like format (RGB images + overlay masks).  
-> You need to provide your own data with a compatible structure.
+The project is built for structured agricultural environments where reliable obstacle detection is critical for autonomous navigation.
 
----
-
-## Features
-
-- Training pipeline for **binary segmentation** (background vs obstacle).
-- Custom `Dataset` for images + overlay masks (obstacle drawn on top of the original image).
-- On-the-fly preprocessing:
-  - image loading, resizing, normalization,
-  - light data augmentation (brightness / contrast / saturation changes, horizontal flip).
-- Support for **train/validation split**.
-- Training loop with:
-  - **weighted cross-entropy loss** (handles class imbalance),
-  - **AdamW** optimizer with cosine learning rate scheduler,
-  - validation metrics: **IoU** and **Dice** for the obstacle class.
-- Inference:
-  - generation of binary obstacle masks,
-  - semi-transparent orange overlays for visual inspection.
+> ⚠️ **Dataset is NOT included**
+> The training script expects a private dataset annotated in a CVAT-like format (RGB images + overlay masks).
+> You must provide your own data following the expected structure.
 
 ---
 
-## Repository structure
+## 🧠 What This Project Does
 
-Suggested structure:
+* Trains a **binary segmentation model** (background vs obstacle)
+* Handles **class imbalance** using weighted cross-entropy
+* Computes **IoU and Dice** metrics for the obstacle class
+* Supports train/validation split
+* Generates visual **semi-transparent overlays** for inspection
+* Saves the best-performing model automatically
 
-''obstacle-segmentation-pytorch/
-├─ obstacle_segmentation.py   # main training + inference script
+---
+
+# 📁 Repository Structure
+
+```
+obstacle-segmentation-pytorch/
+├─ obstacle_segmentation.py   # training + inference script
 ├─ README.md
-└─ (your private data – NOT in this repo)
+└─ (your private dataset - not included)
    ├─ images/
-   │   └─ Train/              # RGB images
+   │   └─ Train/              # RGB input images
    └─ annotations/
-       └─ out_mask/           # overlays: {base}_obstacle_overlay.png''
+       └─ out_mask/           # overlay masks: {base}_obstacle_overlay.png
+```
 
-##Train the model
+### Expected Dataset Format
 
-##Run:
+Each image should have a corresponding overlay mask:
 
--python obstacle_segmentation.py
+```
+images/Train/img_001.png
+annotations/out_mask/img_001_obstacle_overlay.png
+```
 
--The script will:
+Overlay masks must:
 
--create a train/validation split (e.g. 80/20),
+* Match image resolution
+* Contain obstacle regions clearly marked
+* Be convertible to binary segmentation masks
 
--train the model for a configurable number of epochs,
+---
 
--print training and validation loss as well as IoU/Dice for the obstacle class,
+# 🚀 Training
 
--save the best model (highest validation IoU) to
-segformer_obstacle.pth inside OUT_ROOT.
+Run:
 
-##Configurable training parameters
+```bash
+python obstacle_segmentation.py
+```
 
-You can adjust key parameters in the train(...) function, such as:
+The script will automatically:
 
--num_epochs – total number of training epochs,
+1. Create an **80/20 train-validation split**
+2. Train for the configured number of epochs
+3. Print:
 
--lr – learning rate,
+   * Training loss
+   * Validation loss
+   * IoU (Intersection over Union)
+   * Dice score (F1)
+4. Save the best model (highest validation IoU) to:
 
--batch_size – mini-batch size,
+```
+OUT_ROOT/segformer_obstacle.pth
+```
 
--image_size – target resolution for training (e.g. (512, 512)),
+---
 
--class weights in the loss function – to balance background vs obstacle.
+# ⚙️ Training Configuration
 
-##Changing these allows you to trade off training time vs quality and tune the model for your specific dataset.
+You can modify parameters inside the `train(...)` function:
+
+| Parameter       | Description                           |
+| --------------- | ------------------------------------- |
+| `num_epochs`    | Number of training epochs             |
+| `lr`            | Learning rate                         |
+| `batch_size`    | Mini-batch size                       |
+| `image_size`    | Target resolution (e.g. `(512, 512)`) |
+| `class_weights` | Loss weighting for imbalance          |
+
+### Trade-offs
+
+* Larger `image_size` → better detail, higher GPU memory usage
+* Higher `batch_size` → faster training, more memory required
+* Stronger class weighting → better small obstacle detection
+
+---
+
+# 🏗 Training Pipeline Details
+
+### Preprocessing
+
+* Image loading
+* Resize
+* Normalization
+* Light augmentation:
+
+  * brightness
+  * contrast
+  * saturation
+  * horizontal flip
+
+### Loss Function
+
+* **Weighted Cross-Entropy**
+
+  * Mitigates strong background dominance
+
+### Optimizer
+
+* **AdamW**
+* Cosine learning rate scheduler
+
+### Metrics (Validation)
+
+* **IoU** (Intersection over Union)
+* **Dice coefficient**
+
+Both computed for the **obstacle class only**.
+
+---
+
+# 🔎 Inference
+
+After training:
+
+* The best model weights are saved
+* Binary masks are generated
+* Semi-transparent overlays are produced for visual inspection
+
+This enables quick qualitative evaluation in orchard environments.
+
+---
+
+# 🧪 Tips for Best Results
+
+* Ensure masks are clean and consistent
+* Avoid annotation noise around thin structures (e.g. wires)
+* Consider:
+
+  * Increasing image resolution for thin obstacles
+  * Stronger class weighting for rare obstacles
+  * More augmentation for better generalization
+
+---
