@@ -24,4 +24,16 @@ This repository contains a Python script for training and evaluating a deep lear
   - generates binary masks for new images,
   - saves semi-transparent orange overlays for visual inspection.
 
+Requirements
 
+Python 3.9+
+
+Recommended virtual environment (e.g. venv or conda)
+
+Main Python packages:
+
+torch
+torchvision
+transformers
+numpy
+Pillow
