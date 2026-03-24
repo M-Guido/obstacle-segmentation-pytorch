@@ -56,7 +56,7 @@ Overlay masks must:
 Run:
 
 ```bash
-python obstacle_segmentation.py
+python train_obstacle_segformer.py
 ```
 
 The script will automatically:
